@@ -83,7 +83,9 @@ titanic/
 │   ├── Dockerfile
 │   └── requirements.txt
 ├── docker-compose.yml           # Оркестрация 4 сервисов
+├── .env.example                 # 🔐 Шаблон для production
 ├── .gitignore                   # Git ignore rules
+├── SECURITY.md                  # 🛡️ Безопасность и best practices
 ├── README.md                    # Этот файл
 └── REQUIREMENTS.md              # Подробная спецификация
 ```
@@ -145,22 +147,28 @@ curl http://localhost:8000/health
 
 Система использует **JWT токены** для аутентификации. Операции изменения данных требуют валидный `Bearer` токен в заголовке `Authorization`.
 
-### 👥 Дефолтные пользователи для тестирования
-
-```
-admin / admin123 (роль: admin - полный доступ, может удалять пассажиров)
-testuser / user123 (роль: user - может создавать и редактировать пассажиров)
-```
-
 ### 📝 Регистрация нового пользователя
 
+👑 **Важно:** Первый зарегистрированный пользователь автоматически становится **admin** (полный доступ)!  
+Все последующие пользователи получают роль **user** (создание/редактирование, но не удаление).
+
 ```bash
+# Первый пользователь - станет admin
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "newuser",
+    "username": "boss",
+    "password": "mypassword123",
+    "email": "admin@example.com"
+  }'
+
+# Второй и последующие - будут user
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john",
     "password": "password123",
-    "email": "user@example.com"
+    "email": "john@example.com"
   }'
 ```
 
@@ -180,8 +188,8 @@ curl -X POST http://localhost:8000/api/auth/register \
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "admin",
-    "password": "admin123"
+    "username": "boss",
+    "password": "mypassword123"
   }'
 ```
 
@@ -452,10 +460,10 @@ curl -X POST http://localhost:8000/api/passengers \
 ### Сценарий 1: Полный цикл регистрации и создания пассажира
 
 ```bash
-# 1. Регистрация
+# 1. Регистрация (первый пользователь = admin!)
 RESPONSE=$(curl -s -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"username":"jack","password":"roses123","email":"jack@titanic.com"}')
+  -d '{"username":"captain","password":"ship123","email":"captain@titanic.com"}')
 
 TOKEN=$(echo $RESPONSE | jq -r '.access_token')
 echo "Access Token: $TOKEN"
@@ -492,9 +500,15 @@ curl -X POST http://localhost:8000/api/passengers \
 ### Сценарий 3: User пытается удалить пассажира (403)
 
 ```bash
+# Регистрируем второго пользователя (будет user, не admin)
+curl -s -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"sailor","password":"pass123"}'
+
 # Логин как user
 USER_TOKEN=$(curl -s -X POST http://localhost:8000/api/auth/login \
-  -d '{"username":"testuser","password":"user123"}' | jq -r '.access_token')
+  -H "Content-Type: application/json" \
+  -d '{"username":"sailor","password":"pass123"}' | jq -r '.access_token')
 
 # Попытка удаления
 curl -X DELETE http://localhost:8000/api/passengers/1 \
@@ -505,9 +519,10 @@ curl -X DELETE http://localhost:8000/api/passengers/1 \
 ### Сценарий 4: Admin удаляет пассажира (успех)
 
 ```bash
-# Логин как admin
+# Логин как первый пользователь (admin)
 ADMIN_TOKEN=$(curl -s -X POST http://localhost:8000/api/auth/login \
-  -d '{"username":"admin","password":"admin123"}' | jq -r '.access_token')
+  -H "Content-Type: application/json" \
+  -d '{"username":"captain","password":"ship123"}' | jq -r '.access_token')
 
 # Удаление
 curl -X DELETE http://localhost:8000/api/passengers/1 \
@@ -520,7 +535,8 @@ curl -X DELETE http://localhost:8000/api/passengers/1 \
 ```bash
 # Логин
 RESPONSE=$(curl -s -X POST http://localhost:8000/api/auth/login \
-  -d '{"username":"admin","password":"admin123"}')
+  -H "Content-Type: application/json" \
+  -d '{"username":"captain","password":"ship123"}')
 
 ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
 REFRESH_TOKEN=$(echo $RESPONSE | jq -r '.refresh_token')
@@ -566,6 +582,18 @@ docker-compose ps
 ```bash
 docker-compose restart auth-service
 ```
+
+---
+
+## 🔐 Конфигурация
+
+**Для разработки:** Все работает из коробки с демо-значениями в `docker-compose.yml`.
+
+**Для production:**
+1. Скопируйте `.env.example` → `.env`
+2. Сгенерируйте безопасный ключ: `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`
+3. Установите его в `JWT_SECRET_KEY` в `.env`
+4. Прочитайте [SECURITY.md](SECURITY.md) для полного чеклиста безопасности
 
 ---
 

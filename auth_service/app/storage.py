@@ -12,38 +12,7 @@ class UserStorage:
         self.users_by_username: Dict[str, UserInDB] = {}
         self.refresh_tokens: Set[str] = set()  # Активные refresh токены
         self.next_id: int = 1
-        self._create_default_users()
-    
-    def _create_default_users(self):
-        """Создание дефолтных пользователей для тестирования"""
-        # Admin пользователь
-        admin = UserInDB(
-            id=1,
-            username="admin",
-            email="admin@titanic.local",
-            password_hash=hash_password("admin123"),
-            role=UserRole.ADMIN,
-            is_active=True,
-            created_at=datetime.utcnow()
-        )
-        self.users[admin.id] = admin
-        self.users_by_username[admin.username] = admin
-        
-        # Обычный пользователь
-        user = UserInDB(
-            id=2,
-            username="testuser",
-            email="user@titanic.local",
-            password_hash=hash_password("user123"),
-            role=UserRole.USER,
-            is_active=True,
-            created_at=datetime.utcnow()
-        )
-        self.users[user.id] = user
-        self.users_by_username[user.username] = user
-        
-        self.next_id = 3
-        print(f"✅ Created default users: admin (admin123), testuser (user123)")
+        print(f"✅ Auth Service initialized. First registered user will become admin!")
     
     def get_user_by_username(self, username: str) -> Optional[UserInDB]:
         """Получение пользователя по имени"""
@@ -53,13 +22,15 @@ class UserStorage:
         """Получение пользователя по ID"""
         return self.users.get(user_id)
     
-    def create_user(self, user_data: RegisterRequest, role: UserRole = UserRole.USER) -> UserInDB:
+    def create_user(self, user_data: RegisterRequest) -> UserInDB:
         """
         Создание нового пользователя
         
+        Первый зарегистрированный пользователь получает роль admin,
+        все остальные - роль user.
+        
         Args:
             user_data: Данные для регистрации
-            role: Роль пользователя (по умолчанию USER)
             
         Returns:
             UserInDB: Созданный пользователь
@@ -71,6 +42,10 @@ class UserStorage:
         
         if username_lower in self.users_by_username:
             raise ValueError(f"User with username '{user_data.username}' already exists")
+        
+        # Первый пользователь = admin, остальные = user
+        is_first_user = len(self.users) == 0
+        role = UserRole.ADMIN if is_first_user else UserRole.USER
         
         user = UserInDB(
             id=self.next_id,
@@ -85,6 +60,11 @@ class UserStorage:
         self.users[user.id] = user
         self.users_by_username[username_lower] = user
         self.next_id += 1
+        
+        if is_first_user:
+            print(f"👑 First user '{username_lower}' registered as ADMIN!")
+        else:
+            print(f"👤 User '{username_lower}' registered as USER")
         
         return user
     

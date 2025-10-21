@@ -5,7 +5,6 @@ from fastapi.security import HTTPBearer
 import httpx
 import os
 
-# Security scheme для Swagger
 security = HTTPBearer()
 
 tags_metadata = [
@@ -307,10 +306,7 @@ async def register(request: Request):
     summary="Вход в систему",
     description="""
     Аутентификация и получение JWT токенов.
-    
-    **Дефолтные пользователи:**
-    - `admin` / `admin123`
-    - `testuser` / `user123`
+
     """
 )
 async def login(request: Request):

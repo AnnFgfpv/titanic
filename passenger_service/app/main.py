@@ -5,10 +5,8 @@ from .models import Passenger, PassengerCreate, PassengerUpdate
 from .storage import storage
 from .dependencies import get_current_user, require_admin
 
-# Security scheme для Swagger
 security = HTTPBearer()
 
-# Улучшенная метаинформация для Swagger
 tags_metadata = [
     {
         "name": "Health",
@@ -44,9 +42,10 @@ app = FastAPI(
     2. Или войдите: `POST /api/auth/login`
     3. Используйте полученный access_token в заголовке: `Authorization: Bearer <token>`
     
-    **Дефолтные пользователи для тестов:**
-    - `admin` / `admin123` (роль: admin - может удалять)
-    - `testuser` / `user123` (роль: user - может создавать/редактировать)
+    **👑 Первый пользователь = Admin:**
+    
+    Первый зарегистрированный пользователь получает роль **admin** (может удалять).  
+    Все остальные - роль **user** (могут создавать/редактировать).
     """,
     version="3.0.0",
     openapi_tags=tags_metadata,
