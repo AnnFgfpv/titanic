@@ -101,6 +101,15 @@ async def root():
     
     **Роль:** Первый зарегистрированный пользователь получает роль "admin",
     все остальные - роль "user"
+    
+    **Пример запроса:**
+    ```json
+    {
+      "username": "newuser",
+      "password": "password123",
+      "email": "user@example.com"
+    }
+    ```
     """,
     responses={
         201: {
@@ -167,6 +176,14 @@ async def register(user_data: RegisterRequest):
     summary="Вход в систему",
     description="""
     Аутентификация пользователя и получение токенов.
+    
+    **Пример запроса:**
+    ```json
+    {
+      "username": "admin",
+      "password": "admin123"
+    }
+    ```
     """,
     responses={
         200: {
@@ -241,6 +258,13 @@ async def login(credentials: LoginRequest):
     
     Используйте этот endpoint когда access token истек (15 минут).
     Refresh token действителен 7 дней.
+    
+    **Пример запроса:**
+    ```json
+    {
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
     """,
     responses={
         200: {"description": "Токен успешно обновлен"},
@@ -319,7 +343,16 @@ async def get_me(current_user: User = Depends(get_current_active_user)):
     response_model=User,
     tags=["Users"],
     summary="Обновить профиль",
-    description="Обновление email пользователя",
+    description="""
+    Обновление email пользователя.
+    
+    **Пример запроса:**
+    ```json
+    {
+      "email": "newemail@example.com"
+    }
+    ```
+    """,
     responses={
         200: {"description": "Профиль обновлен"},
         401: {"description": "Не авторизован"}
@@ -358,6 +391,13 @@ async def update_me(
     
     После logout текущий refresh token становится недействительным.
     Access token продолжит работать до истечения срока (15 минут).
+    
+    **Пример запроса:**
+    ```json
+    {
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
     """,
     responses={
         204: {"description": "Успешный выход"},

@@ -246,6 +246,21 @@ async def search_passengers(
     Поле `created_by` будет автоматически заполнено username текущего пользователя.
     
     **🎭 Пасхалка:** Попробуйте поселить Джека и Розу в одну каюту! 
+    
+    **Пример запроса:**
+    ```json
+    {
+      "name": "Dawson, Mr. Jack",
+      "pclass": 3,
+      "sex": "male",
+      "age": 20,
+      "fare": 8.05,
+      "embarked": "Southampton",
+      "destination": "Pursue dreams in America",
+      "cabin": null,
+      "ticket": "A/5 21171"
+    }
+    ```
     """,
     responses={
         201: {
@@ -368,6 +383,21 @@ async def get_passenger(passenger_id: int):
     Обновление данных пассажира. **Требуется JWT авторизация.**
     
     **🎭 Пасхалка:** Джек и Роза не могут быть в одной каюте!
+    
+    **Пример запроса:**
+    ```json
+    {
+      "name": "DeWitt Bukater, Miss. Rose",
+      "pclass": 1,
+      "sex": "female",
+      "age": 17,
+      "fare": 211.34,
+      "embarked": "Southampton",
+      "destination": "New York",
+      "cabin": "B52",
+      "ticket": "PC 17599"
+    }
+    ```
     """,
     responses={
         200: {
