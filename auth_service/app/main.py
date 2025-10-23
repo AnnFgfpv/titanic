@@ -103,8 +103,29 @@ async def root():
     все остальные - роль "user"
     """,
     responses={
-        201: {"description": "Пользователь успешно зарегистрирован"},
-        400: {"description": "Пользователь с таким username уже существует"}
+        201: {
+            "description": "Пользователь успешно зарегистрирован",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VyIiwidXNlcl9pZCI6Miwicm9sZSI6InVzZXIiLCJleHAiOjE3Mzc0NTUwMDB9.example_access_token_signature",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VyIiwidXNlcl9pZCI6Miwicm9sZSI6InVzZXIiLCJ0eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNzQ2NDAwMH0.example_refresh_token_signature",
+                        "token_type": "bearer",
+                        "expires_in": 900
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Пользователь с таким username уже существует",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Username 'admin' already exists"
+                    }
+                }
+            }
+        }
     }
 )
 async def register(user_data: RegisterRequest):
@@ -148,8 +169,29 @@ async def register(user_data: RegisterRequest):
     Аутентификация пользователя и получение токенов.
     """,
     responses={
-        200: {"description": "Успешный вход"},
-        401: {"description": "Неверный username или пароль"}
+        200: {
+            "description": "Успешный вход",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJfaWQiOjEsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczNzQ1NTAwMH0.example_access_token_signature",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJfaWQiOjEsInJvbGUiOiJhZG1pbiIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzM3NDY0MDAwfQ.example_refresh_token_signature",
+                        "token_type": "bearer",
+                        "expires_in": 900
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Неверный username или пароль",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Incorrect username or password"
+                    }
+                }
+            }
+        }
     }
 )
 async def login(credentials: LoginRequest):

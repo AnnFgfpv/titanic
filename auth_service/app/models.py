@@ -53,6 +53,13 @@ class LoginRequest(BaseModel):
 class RefreshRequest(BaseModel):
     """Запрос на обновление токена"""
     refresh_token: str = Field(..., description="Refresh token")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJfaWQiOjEsInJvbGUiOiJhZG1pbiIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzM3NDY0MDAwfQ.example_refresh_token_signature"
+            }
+        }
 
 
 class TokenResponse(BaseModel):

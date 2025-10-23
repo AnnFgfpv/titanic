@@ -102,9 +102,50 @@ async def root():
     """,
     responses={
         200: {
-            "description": "Успешный ответ со списком пассажиров"
+            "description": "Успешный ответ со списком пассажиров",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": 1,
+                            "name": "Braund, Mr. Owen Harris",
+                            "pclass": 3,
+                            "sex": "male",
+                            "age": 22,
+                            "fare": 7.25,
+                            "embarked": "Southampton",
+                            "destination": "New York",
+                            "cabin": None,
+                            "ticket": "A/5 21171",
+                            "created_by": "system"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Cumings, Mrs. John Bradley (Florence Briggs Thayer)",
+                            "pclass": 1,
+                            "sex": "female",
+                            "age": 38,
+                            "fare": 71.28,
+                            "embarked": "Cherbourg",
+                            "destination": "New York",
+                            "cabin": "C85",
+                            "ticket": "PC 17599",
+                            "created_by": "system"
+                        }
+                    ]
+                }
+            }
         },
-        400: {"description": "Некорректные параметры запроса"}
+        400: {
+            "description": "Некорректные параметры запроса",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "sex must be 'male' or 'female'"
+                    }
+                }
+            }
+        }
     }
 )
 async def get_passengers(
@@ -147,7 +188,41 @@ async def get_passengers(
     **🔓 Не требует авторизации**
     """,
     responses={
-        200: {"description": "Список найденных пассажиров"}
+        200: {
+            "description": "Список найденных пассажиров",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": 1,
+                            "name": "Dawson, Mr. Jack",
+                            "pclass": 3,
+                            "sex": "male",
+                            "age": 20,
+                            "fare": 8.05,
+                            "embarked": "Southampton",
+                            "destination": "Pursue dreams in America",
+                            "cabin": None,
+                            "ticket": "A/5 21171",
+                            "created_by": "admin"
+                        },
+                        {
+                            "id": 2,
+                            "name": "DeWitt Bukater, Miss. Rose",
+                            "pclass": 1,
+                            "sex": "female",
+                            "age": 17,
+                            "fare": 211.34,
+                            "embarked": "Southampton",
+                            "destination": "New York",
+                            "cabin": "B52",
+                            "ticket": "PC 17599",
+                            "created_by": "admin"
+                        }
+                    ]
+                }
+            }
+        }
     }
 )
 async def search_passengers(
@@ -173,9 +248,46 @@ async def search_passengers(
     **🎭 Пасхалка:** Попробуйте поселить Джека и Розу в одну каюту! 
     """,
     responses={
-        201: {"description": "Пассажир успешно создан"},
-        400: {"description": "Ошибка валидации данных или пасхалка с Джеком и Розой! 🎬"},
-        401: {"description": "Отсутствует или невалидный JWT токен"}
+        201: {
+            "description": "Пассажир успешно создан",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 102,
+                        "name": "Dawson, Mr. Jack",
+                        "pclass": 3,
+                        "sex": "male",
+                        "age": 20,
+                        "fare": 8.05,
+                        "embarked": "Southampton",
+                        "destination": "Pursue dreams in America",
+                        "cabin": None,
+                        "ticket": "A/5 21171",
+                        "created_by": "admin"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Ошибка валидации данных или пасхалка с Джеком и Розой! 🎬",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Jack and Rose cannot share the same cabin! 💔"
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Отсутствует или невалидный JWT токен",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Not authenticated"
+                    }
+                }
+            }
+        }
     }
 )
 async def create_passenger(
@@ -204,8 +316,36 @@ async def create_passenger(
     **🔓 Не требует авторизации**
     """,
     responses={
-        200: {"description": "Пассажир найден"},
-        404: {"description": "Пассажир с указанным ID не найден"}
+        200: {
+            "description": "Пассажир найден",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "name": "Braund, Mr. Owen Harris",
+                        "pclass": 3,
+                        "sex": "male",
+                        "age": 22,
+                        "fare": 7.25,
+                        "embarked": "Southampton",
+                        "destination": "New York",
+                        "cabin": None,
+                        "ticket": "A/5 21171",
+                        "created_by": "system"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Пассажир с указанным ID не найден",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Passenger with id 999 not found"
+                    }
+                }
+            }
+        }
     }
 )
 async def get_passenger(passenger_id: int):
@@ -230,10 +370,56 @@ async def get_passenger(passenger_id: int):
     **🎭 Пасхалка:** Джек и Роза не могут быть в одной каюте!
     """,
     responses={
-        200: {"description": "Пассажир успешно обновлен"},
-        400: {"description": "Ошибка валидации или пасхалка с каютой"},
-        401: {"description": "Отсутствует или невалидный JWT токен"},
-        404: {"description": "Пассажир не найден"}
+        200: {
+            "description": "Пассажир успешно обновлен",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "name": "DeWitt Bukater, Miss. Rose",
+                        "pclass": 1,
+                        "sex": "female",
+                        "age": 17,
+                        "fare": 211.34,
+                        "embarked": "Southampton",
+                        "destination": "New York",
+                        "cabin": "B52",
+                        "ticket": "PC 17599",
+                        "created_by": "admin"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Ошибка валидации или пасхалка с каютой",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Jack and Rose cannot share the same cabin! 💔"
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Отсутствует или невалидный JWT токен",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Not authenticated"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Пассажир не найден",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Passenger with id 999 not found"
+                    }
+                }
+            }
+        }
     }
 )
 async def update_passenger(
@@ -271,10 +457,39 @@ async def update_passenger(
     Только администраторы могут удалять пассажиров.
     """,
     responses={
-        204: {"description": "Пассажир успешно удален"},
-        401: {"description": "Отсутствует или невалидный JWT токен"},
-        403: {"description": "Недостаточно прав (требуется роль admin)"},
-        404: {"description": "Пассажир не найден"}
+        204: {
+            "description": "Пассажир успешно удален"
+        },
+        401: {
+            "description": "Отсутствует или невалидный JWT токен",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Not authenticated"
+                    }
+                }
+            }
+        },
+        403: {
+            "description": "Недостаточно прав (требуется роль admin)",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Insufficient permissions. Admin role required."
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Пассажир не найден",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Passenger with id 999 not found"
+                    }
+                }
+            }
+        }
     }
 )
 async def delete_passenger(

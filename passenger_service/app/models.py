@@ -31,12 +31,40 @@ class PassengerBase(BaseModel):
 
 class PassengerCreate(PassengerBase):
     """Модель для создания нового пассажира"""
-    pass
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "Dawson, Mr. Jack",
+                "pclass": 3,
+                "sex": "male",
+                "age": 20,
+                "fare": 8.05,
+                "embarked": "Southampton",
+                "destination": "Pursue dreams in America",
+                "cabin": None,
+                "ticket": "A/5 21171"
+            }
+        }
 
 
 class PassengerUpdate(PassengerBase):
     """Модель для обновления пассажира"""
-    pass
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "DeWitt Bukater, Miss. Rose",
+                "pclass": 1,
+                "sex": "female",
+                "age": 17,
+                "fare": 211.34,
+                "embarked": "Southampton",
+                "destination": "New York",
+                "cabin": "B52",
+                "ticket": "PC 17599"
+            }
+        }
 
 
 class Passenger(PassengerBase):
