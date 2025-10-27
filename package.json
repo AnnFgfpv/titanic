@@ -1,0 +1,26 @@
+{
+  "name": "titanic",
+  "version": "1.0.0",
+  "description": "Система микросервисов на основе данных пассажиров легендарного лайнера RMS Titanic. Этот проект представляет собой **продвинутый учебный стенд** для практики работы с распределенными системами, написания автотестов и изучения микросервисной архитектуры.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnnFgfpv/titanic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AnnFgfpv/titanic/issues"
+  },
+  "homepage": "https://github.com/AnnFgfpv/titanic#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.9.1"
+  }
+}
