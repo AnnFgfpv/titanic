@@ -13,7 +13,7 @@ const newBooking = {
   fare: 8.05,
   pclass: 3,
   cabin: null,
-  sex: male,
+  sex: "male",
   ticket: "A/5 21171",
   passenger_id: 101,
 };
@@ -26,7 +26,7 @@ const updatedBooking = {
   fare: 512.3292,
   pclass: 1,
   cabin: null,
-  sex: female,
+  sex: "female",
   ticket: "PC 17599",
   cabin: B52,
   passenger_id: 102,
