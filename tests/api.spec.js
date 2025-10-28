@@ -25,10 +25,9 @@ const updatedBooking = {
   embarked: "SouthHampton",
   fare: 512.3292,
   pclass: 1,
-  cabin: null,
   sex: "female",
   ticket: "PC 17599",
-  cabin: B52,
+  cabin: "B52",
   passenger_id: 102,
 };
 
@@ -101,8 +100,7 @@ test ('Обновление данные пассажира', async ({ request }
         headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': '*/*'
-        },
-        data: newBooking,
+        }
     });
 
     expect(resp.status()).toBe(204);
