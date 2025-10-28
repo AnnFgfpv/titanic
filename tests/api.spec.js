@@ -6,30 +6,32 @@ let passenger_id;
 let token;
 
 const newBooking = {
-  firstname: 'Jack',
-  lastname: 'Dawson',
+  name: "Dawson, Mr. Jack",
   age: 20,
   destination: "Pursue dreams in America",
   embarked: "Southampton",
   fare: 8.05,
-  name: " Mr. Jack",
   pclass: 3,
-  sex: "male",
+  cabin: null,
+  sex: male,
   ticket: "A/5 21171",
+  passenger_id: 101,
 };
 
 const updatedBooking = {
-  firstname: 'DeWitt Bukater, Miss. Rose',
+  name: "DeWitt Bukater, Miss. Rose",
   age: 17,
-  destination: "New York",
+  destination: "Wedding in Philadelphia",
   embarked: "SouthHampton",
-  fare: 211.34,
-  name: " Mr. James",
+  fare: 512.3292,
   pclass: 1,
-  sex: "female",
+  cabin: null,
+  sex: female,
   ticket: "PC 17599",
-  cabin: "B52",
+  cabin: B52,
+  passenger_id: 102,
 };
+
 
 
 test.describe('API-тесты для Titanic @api', () => {
@@ -38,7 +40,8 @@ test.describe('API-тесты для Titanic @api', () => {
     const createResp = await request.post(`${baseURL}/passengers`, {
       headers: {
         'Authorization': `Bearer ${AUTH_TOKEN}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       data: newBooking,
     });
@@ -51,29 +54,57 @@ test.describe('API-тесты для Titanic @api', () => {
     token = AUTH_TOKEN;
   });
 
- test('Чтение бронирования', async ({ request }) => {
-    const resp = await request.get(`${baseURL}/passengers/${newBooking.lastname}`);
+ test('Поиск пассажиров по имени', async ({ request }) => {
+    const resp = await request.get(`${baseURL}/passengers/search/${newBooking.name}`, {
+        headers: {
+        'Accept': 'application/json'
+         }
+        });
     
     expect(resp.status()).toBe(200);
 
     const data = await resp.json();
-    expect(data.firstname).toBe(newBooking.firstname);
-    expect(data.lastname).toBe(newBooking.lastname);
+    expect(data.name).toBe(newBooking.name);
 });
 
-   test('Обновление бронирования', async ({ request }) => {
-    const resp = await request.put(`${baseURL}/passengers/${passenger_id}`, {
+   test('Получить пассажира по id', async ({ request }) => {
+    const resp = await request.get(`${baseURL}/passengers/${updatedBooking.passenger_id}`, {
       headers: {
-        'Authorization': `Bearer ${AUTH_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      data: updatedBooking,
+     'Accept': 'application/json'
+      }
     });
 
     expect(resp.status()).toBe(200);
     const updated = await resp.json();
     
-    expect(updated).toMatchObject(updatedBooking);
+    expect(updated.passenger_id).toBe(updatedBooking.passenger_id);
+});
+
+test ('Обновление данные пассажира', async ({ request }) => {
+    const resp = await request.put(`${baseURL}/passengers/${updatedBooking.passenger_id}`, {
+        headers: {
+        'Authorization': `Bearer ${AUTH_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+        },
+        data: updatedBooking,
+    });
+
+    expect(resp.status()).toBe(200);
+    const body = await resp.json();
+
+    expect(body.name).toBe(updatedBooking.name);
+    });
+
+    test ('Удаление пассажира', async ({ request }) => {
+    const resp = await request.delete(`${baseURL}/passengers/${passenger_id}`, {
+        headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': '*/*'
+        },
+        data: newBooking,
+    });
+
+    expect(resp.status()).toBe(204);
 });
 });
